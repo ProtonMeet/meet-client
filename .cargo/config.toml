@@ -1,0 +1,84 @@
+[build]
+rustflags = ["--cfg", "mls_build_async"]
+
+[future-incompat-report]
+frequency = "never" # CM-185: Remove this after February 2026.
+
+[target.wasm32-unknown-unknown]
+rustflags = [
+    '--cfg', 'mls_build_async',
+    '--cfg', 'getrandom_backend="wasm_js"',
+    # '-C', 'link-args=-z stack-size=4194304'
+]
+
+# use lld when linking in CI
+[target.x86_64-unknown-linux-gnu]
+rustflags = ["--cfg", "mls_build_async", "-C", "link-arg=-fuse-ld=lld"]
+
+[net]
+git-fetch-with-cli = true
+
+[alias]
+xtask = "run --manifest-path ./xtask/Cargo.toml --"
+xcode = ["bin", "cargo-xcode"]
+check-core = ["check", "-p", "shared", "--no-default-features"]
+unit-test = ["nextest", "run", "-p", "shared", "--no-fail-fast"]
+unit-test-flaky = ["nextest", "run", "-p", "shared", "--no-fail-fast", "--features=flaky"]
+
+[registries.proton]
+index = "sparse+https://rust.gitlab-pages.protontech.ch/shared/registry/index/"
+
+[env]
+RUST_MIN_STACK = "4194304"
+#
+# ANDROID SETUP
+# Uses LLVM's ar and ranlib instead of GNU Binutils.
+#
+# ARMv7 (32-bit ARM):
+CC_armv7_linux_androideabi = "armv7a-linux-androideabi26-clang"
+CXX_armv7_linux_androideabi = "armv7a-linux-androideabi26-clang++"
+AR_armv7_linux_androideabi = "llvm-ar"
+RANLIB_armv7_linux_androideabi = "llvm-ranlib"
+# AArch64 (64-bit ARM):
+CC_aarch64_linux_android = "aarch64-linux-android26-clang"
+CXX_aarch64_linux_android = "aarch64-linux-android26-clang++"
+AR_aarch64_linux_android = "llvm-ar"
+RANLIB_aarch64_linux_android = "llvm-ranlib"
+# x86_64 (64-bit Intel):
+CC_x86_64_linux_android = "x86_64-linux-android26-clang"
+CXX_x86_64_linux_android = "x86_64-linux-android26-clang++"
+AR_x86_64_linux_android = "llvm-ar"
+RANLIB_x86_64_linux_android = "llvm-ranlib"
+
+#
+# ANDROID LINKAGE
+#
+
+# ARMv7 (32-bit ARM):
+[target.armv7-linux-androideabi]
+ar = "llvm-ar"
+linker = "armv7a-linux-androideabi26-clang"
+rustflags = [
+    "-C", "target_feature=+neon", # Enable NEON SIMD instructions
+    "-C", "link-args=-latomic" # Link against libatomic (atomic operations)
+]
+
+# AArch64 (64-bit ARM):
+[target.aarch64-linux-android]
+ar = "llvm-ar"
+linker = "aarch64-linux-android26-clang"
+rustflags = [
+    "-C", "link-args=-latomic" # Link against libatomic (atomic operations)
+]
+
+# x86_64 (64-bit Intel):
+[target.x86_64-linux-android]
+ar = "llvm-ar"
+linker = "x86_64-linux-android26-clang"
+rustflags = [
+    "-C", "link-args=-latomic" # Link against libatomic (atomic operations)
+]
+
+# osx libsql requires libiconv
+[target.aarch64-apple-darwin]
+rustflags = ["--cfg", "mls_build_async", "-L/opt/homebrew/opt/libiconv/lib"]

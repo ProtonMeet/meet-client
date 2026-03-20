@@ -1,0 +1,18 @@
+allow-unwrap-in-tests = true
+allow-panic-in-tests = true
+allow-indexing-slicing-in-tests = true
+allow-unwrap-in-consts = true
+
+cognitive-complexity-threshold = 100
+
+array-size-threshold = 4096 # 16384
+# future-size-threshold = 8192 # 16384
+stack-size-threshold = 300000 # 512000
+enum-variant-size-threshold = 200 # 200
+large-error-threshold = 128 # 128
+pass-by-value-size-limit = 100 # 256
+await-holding-invalid-types = [
+    "tracing::span::Entered",
+    "tracing::span::EnteredSpan",
+]
+# disallowed-types = ["std::collections::HashMap", "std::collections::HashSet"]

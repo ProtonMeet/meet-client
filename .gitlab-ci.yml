@@ -1,0 +1,15 @@
+default:
+  tags:
+    - shared-medium
+
+include:
+  - component: gitlab.protontech.ch/proton/devops/cicd-components/kits/devsecops/generic@0.0.43
+    inputs:
+      stage: sec_scan
+  - component: gitlab.protontech.ch/proton/devops/cicd-components/devsecops/semgrep/scan-code@0.0.26
+    inputs:
+      stage: sec_scan
+      allowed-to-fail: true
+
+stages: 
+  - sec_scan

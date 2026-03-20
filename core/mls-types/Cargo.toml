@@ -1,0 +1,42 @@
+[package]
+name = "mls-types"
+version.workspace = true
+edition.workspace = true
+
+[package.metadata.cargo-machete]
+ignored = ["bytes"]
+
+[features]
+default = ["wickr"]
+wickr = ["dep:mls-rs"]
+test-utils = ["mls-rs?/x509"]
+
+[dependencies]
+meet-mls.workspace = true
+meet-identifiers.workspace = true
+proton-claims.workspace = true
+identity.workspace = true
+serde.workspace = true
+hex = { workspace = true, features = ["serde"] }
+serde_bytes.workspace = true
+thiserror.workspace = true
+bytes.workspace = true
+zeroize.workspace = true
+url.workspace = true
+#mls-spec = { workspace = true }
+#mimi-protocol-mls = { workspace = true, features = ["mls-extensions"] }
+#mimi-room-policy.workspace = true
+
+# crypto
+signature.workspace = true
+
+mls-rs = { workspace = true, optional = true }
+mls-rs-codec.workspace = true
+mls-rs-crypto-rustcrypto = { workspace = true }
+futures.workspace = true
+
+[dev-dependencies]
+mls-rs = { workspace = true, features = ["x509"] }
+
+[lints]
+workspace = true

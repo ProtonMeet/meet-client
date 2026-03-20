@@ -1,0 +1,14 @@
+# See https://rust-lang.github.io/rustup/overrides.html for details on how this file works
+[toolchain]
+targets = [
+    "aarch64-linux-android",
+    "armv7-linux-androideabi",
+    "i686-linux-android",
+    "x86_64-linux-android",
+    "aarch64-apple-ios",
+    "x86_64-apple-ios",
+    "aarch64-apple-ios-sim",
+    "wasm32-unknown-unknown",
+]
+components = ["clippy", "rustfmt"] # see https://rust-lang.github.io/rustup/concepts/components.html
+profile = "minimal"

@@ -1,0 +1,63 @@
+[package]
+name = "mls-trait"
+version.workspace = true
+edition.workspace = true
+
+[features]
+default = ["wickr"]
+wickr = [
+    "mls-rs",
+    "mls-rs-core",
+    "mls-rs-crypto-rustcrypto",
+    "maybe-async",
+    "async-trait",
+]
+test-utils = ["meet-identifiers/test-util", "mls-types/test-utils"]
+external-sender = ["mls-rs?/external_client"]
+
+[dependencies]
+meet-mls.workspace = true
+
+mls-spec.workspace = true
+mls-types.workspace = true
+thiserror.workspace = true
+meet-identifiers.workspace = true
+futures-util.workspace = true
+tracing.workspace = true
+base64.workspace = true
+sha2.workspace = true
+itertools.workspace = true
+hex.workspace = true
+time.workspace = true
+ahash.workspace = true
+
+mls-rs = { workspace = true, optional = true }
+mls-rs-core = { workspace = true, optional = true }
+mls-rs-codec.workspace = true
+mls-rs-crypto-rustcrypto = { workspace = true, optional = true }
+
+# sd-cwt
+proton-claims = { workspace = true, features = ["ed25519", "p256", "p384"] }
+identity.workspace = true
+
+# still required for impl mls-rs traits and solve complex lifetime conflicts
+maybe-async = { workspace = true, optional = true }
+async-trait = { workspace = true, optional = true }
+serde = { workspace = true, features = ["derive"] }
+serde_bytes.workspace = true
+ed25519-dalek = { workspace = true, features = ["pem"] }
+p256.workspace = true
+p384.workspace = true
+
+[dev-dependencies]
+mls-trait = { path = ".", features = ["test-utils", "external-sender"] }
+tokio = { workspace = true, features = ["full"] }
+serde_json.workspace = true
+identity = { workspace = true, features = ["test-utils"] }
+eyre.workspace = true
+color-eyre.workspace = true
+rand.workspace = true
+divan.workspace = true
+
+[lints]
+workspace = true
