@@ -285,7 +285,7 @@ impl<Kv: KvExt + Send + Sync + Clone> MlsGroupTrait for MlsGroup<Kv> {
                 inner_application_content: m.into(),
             };
             let m = self.0.encrypt_application_message(&af.to_tls_bytes()?, vec![]).await?;
-            mls_messages.push(m.into());
+            mls_messages.push(m.0.into());
         }
 
         self.write_to_storage().await?;
@@ -300,7 +300,7 @@ impl<Kv: KvExt + Send + Sync + Clone> MlsGroupTrait for MlsGroup<Kv> {
         };
         let encrypted = self.0.encrypt_application_message(&af.to_tls_bytes()?, vec![]).await?;
         self.write_to_storage().await?;
-        Ok(encrypted.into())
+        Ok(encrypted.0.into())
     }
 
     fn ciphersuite(&self) -> MlsResult<CipherSuite> {
