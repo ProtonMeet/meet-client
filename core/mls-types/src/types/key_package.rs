@@ -1,5 +1,7 @@
-use crate::types::leaf_node::LeafNodeSource;
-use crate::{CipherSuite, Credential, CredentialType, MlsTypesError, MlsTypesResult, types::leaf_node::LeafNode};
+use crate::{
+    CipherSuite, Credential, CredentialType, MlsTypesError, MlsTypesResult, types::leaf_node::LeafNode,
+    types::leaf_node::LeafNodeSource,
+};
 use hex::ToHex;
 use std::pin::pin;
 
@@ -71,18 +73,21 @@ impl KeyPackage {
 
 // TODO: own this type
 #[derive(
-    Debug,
-    Clone,
-    Eq,
-    PartialEq,
-    Hash,
-    serde::Serialize,
-    serde::Deserialize,
-    mls_rs_codec::MlsSize,
-    mls_rs_codec::MlsEncode,
-    mls_rs_codec::MlsDecode,
+    Debug, Clone, Eq, PartialEq, Hash, mls_rs_codec::MlsSize, mls_rs_codec::MlsEncode, mls_rs_codec::MlsDecode,
 )]
 pub struct KeyPackageRef(mls_rs::KeyPackageRef);
+
+impl serde::Serialize for KeyPackageRef {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        serializer.serialize_bytes(serde_bytes::Bytes::new(self.0.as_ref()))
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for KeyPackageRef {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        Ok(Self(<Vec<u8> as serde::Deserialize>::deserialize(deserializer)?.into()))
+    }
+}
 
 impl KeyPackageRef {
     pub fn as_bytes(&self) -> &[u8] {

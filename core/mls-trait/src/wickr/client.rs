@@ -317,7 +317,7 @@ impl<Kv: KvExt + Send + Sync + Clone + Debug> MlsClientTrait for MlsClient<Kv, I
         // We have all the groups given as parameters but we are still asking mls-rs to re-fetch them from the DB.
         //
         // Instead we should try to do `Snapshot::mls_decode(&mut &*group)` and `Group::from_snapshot()`
-        let snapshot = mls_rs::group::snapshot::Snapshot::mls_decode(&mut &*group.state.data)?;
+        let snapshot = mls_rs::group::snapshot::Snapshot::mls_decode(&mut &*group.state.data.as_ref())?;
         let group = mls_rs::Group::from_snapshot(self.delegate()?.config().clone(), snapshot).await?;
         Ok(MlsGroup(Box::new(group), Default::default()))
     }
@@ -574,7 +574,7 @@ impl<Kv: KvExt + Send + Sync + Clone + Debug> MlsClientTrait for MlsClient<Kv, I
         keypair: HpkeKeyPair,
         label: &str,
         context: &[u8],
-    ) -> MlsResult<Vec<u8>> {
+    ) -> MlsResult<zeroize::Zeroizing<Vec<u8>>> {
         let ciphertext = mls_rs_core::crypto::HpkeCiphertext::mls_decode(&mut hpke_ciphertext)?;
         let crypto_provider = self.delegate()?.crypto_provider();
         let cs_provider =
@@ -592,11 +592,10 @@ impl<Kv: KvExt + Send + Sync + Clone + Debug> MlsClientTrait for MlsClient<Kv, I
                 &info,
             )
             .await?;
-        let decrypted = hpke_ctx
+        Ok(hpke_ctx
             .open(None, &ciphertext.ciphertext)
             .await
-            .map_err(IntoAnyError::into_any_error)?;
-        Ok(decrypted)
+            .map_err(IntoAnyError::into_any_error)?)
     }
 
     fn new_identity_presentation(
