@@ -95,7 +95,7 @@ pub trait MlsClientTrait {
         keypair: HpkeKeyPair,
         label: &str,
         context: &[u8],
-    ) -> MlsResult<Vec<u8>>;
+    ) -> MlsResult<zeroize::Zeroizing<Vec<u8>>>;
 
     async fn try_sign(&self, tbs: &[u8], label: &str) -> MlsResult<Signature>;
 

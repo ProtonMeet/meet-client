@@ -538,15 +538,13 @@ impl MlsRules for ProtonMeetRules {
         new_context: &GroupContext,
         proposals: &ProposalBundle,
     ) -> Result<CommitOptions, Self::Error> {
-        let force_path_for_adds = !proposals.add_proposals().is_empty();
-
         Ok(self
             .mls_rules
             .commit_options(new_roster, new_context, proposals)
             .map_err(|_| Self::Error::ImplementationError("default rules in mls-rs failed"))?
             .with_ratchet_tree_extension(false)
             .with_single_welcome_message(true)
-            .with_path_required(force_path_for_adds)
+            .with_path_required(false)
             .with_allow_external_commit(true))
     }
 

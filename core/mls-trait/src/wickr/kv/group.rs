@@ -1,7 +1,9 @@
 use crate::{KvExt, kv::MlsEntity, wickr::error::WickrProviderError};
 use meet_identifiers::GroupId;
 use mls_rs_core::group::{EpochRecord as WickrEpochRecord, GroupState as WickrGroupState};
+use serde::ser::SerializeMap;
 use std::collections::BTreeMap;
+use zeroize::Zeroizing;
 
 #[derive(Debug, Clone)]
 pub struct GroupKv<S: KvExt + Send + Sync>(pub S);
@@ -9,6 +11,7 @@ pub struct GroupKv<S: KvExt + Send + Sync>(pub S);
 /// A MLS Group data model
 /// /!\ DO NOT CHANGE THE SERIALIZATION NAMES OF THE FIELDS UNLESS YOU ALSO HAVE A DATABASE MIGRATION IN PLACE
 #[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(any(test, feature = "test-utils"), derive(Clone))]
 pub struct MlsGroupEntity {
     /// Unique identifier
     /// serde rename allows for persistence crate to treat this as the primary key since it relies
@@ -86,12 +89,53 @@ impl crate::Entity for MlsGroupEntity {
 impl MlsEntity for MlsGroupEntity {}
 
 #[cfg_attr(any(test, feature = "test-utils"), derive(Clone))]
-#[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct GroupStateRecord {
-    #[serde(with = "serde_bytes")]
     pub id: Vec<u8>,
-    #[serde(with = "serde_bytes")]
-    pub data: Vec<u8>,
+    pub data: Zeroizing<Vec<u8>>,
+}
+
+impl serde::Serialize for GroupStateRecord {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let mut map = serializer.serialize_map(Some(2))?;
+        map.serialize_entry("id", &serde_bytes::Bytes::new(&self.id))?;
+        map.serialize_entry("data", &serde_bytes::Bytes::new(&self.data))?;
+        map.end()
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for GroupStateRecord {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        struct GroupStateRecordVisitor;
+        impl<'de> serde::de::Visitor<'de> for GroupStateRecordVisitor {
+            type Value = GroupStateRecord;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                write!(formatter, "a GroupStateRecord")
+            }
+
+            fn visit_map<A: serde::de::MapAccess<'de>>(self, mut map: A) -> Result<Self::Value, A::Error> {
+                use serde::de::Error as _;
+
+                let (mut id, mut data) = (None, None);
+                while let Ok(Some(key)) = map.next_key::<String>() {
+                    match key.as_str() {
+                        "id" => {
+                            id.replace(map.next_value()?);
+                        }
+                        "data" => {
+                            data.replace(map.next_value()?);
+                        }
+                        _ => {}
+                    }
+                }
+                let id = id.ok_or_else(|| A::Error::custom("No 'id' in GroupStateRecord"))?;
+                let data: Vec<u8> = data.ok_or_else(|| A::Error::custom("No 'data' in GroupStateRecord"))?;
+                Ok(Self::Value { id, data: data.into() })
+            }
+        }
+        deserializer.deserialize_map(GroupStateRecordVisitor)
+    }
 }
 
 impl From<WickrGroupState> for GroupStateRecord {
@@ -112,11 +156,54 @@ impl From<GroupStateRecord> for WickrGroupState {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, PartialEq, Eq)]
+#[cfg_attr(any(test, feature = "test-utils"), derive(Clone))]
 pub struct EpochRecord {
     pub id: u64,
-    #[serde(with = "serde_bytes")]
-    pub data: Vec<u8>,
+    pub data: Zeroizing<Vec<u8>>,
+}
+
+impl serde::Serialize for EpochRecord {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let mut map = serializer.serialize_map(Some(2))?;
+        map.serialize_entry("id", &self.id)?;
+        map.serialize_entry("data", &serde_bytes::Bytes::new(&self.data))?;
+        map.end()
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for EpochRecord {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        struct EpochRecordVisitor;
+        impl<'de> serde::de::Visitor<'de> for EpochRecordVisitor {
+            type Value = EpochRecord;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                write!(formatter, "a EpochRecord")
+            }
+
+            fn visit_map<A: serde::de::MapAccess<'de>>(self, mut map: A) -> Result<Self::Value, A::Error> {
+                use serde::de::Error as _;
+
+                let (mut id, mut data) = (None, None);
+                while let Ok(Some(key)) = map.next_key::<String>() {
+                    match key.as_str() {
+                        "id" => {
+                            id.replace(map.next_value()?);
+                        }
+                        "data" => {
+                            data.replace(map.next_value()?);
+                        }
+                        _ => {}
+                    }
+                }
+                let id = id.ok_or_else(|| A::Error::custom("No 'id' in EpochRecord"))?;
+                let data: Vec<u8> = data.ok_or_else(|| A::Error::custom("No 'data' in EpochRecord"))?;
+                Ok(Self::Value { id, data: data.into() })
+            }
+        }
+        deserializer.deserialize_map(EpochRecordVisitor)
+    }
 }
 
 impl From<WickrEpochRecord> for EpochRecord {
@@ -142,7 +229,7 @@ impl<S: KvExt + Send + Sync> mls_rs_core::group::GroupStateStorage for GroupKv<S
         Ok(epoch)
     }
 
-    async fn state(&self, id: &[u8]) -> Result<Option<Vec<u8>>, Self::Error> {
+    async fn state(&self, id: &[u8]) -> Result<Option<Zeroizing<Vec<u8>>>, Self::Error> {
         let id = id.try_into()?;
         tracing::debug!("Fetching state for group '{id}'");
         let group = self.0.get::<MlsGroupEntity>(&id).await?;
@@ -150,7 +237,7 @@ impl<S: KvExt + Send + Sync> mls_rs_core::group::GroupStateStorage for GroupKv<S
         Ok(Some(state))
     }
 
-    async fn epoch(&self, id: &[u8], epoch: u64) -> Result<Option<Vec<u8>>, Self::Error> {
+    async fn epoch(&self, id: &[u8], epoch: u64) -> Result<Option<Zeroizing<Vec<u8>>>, Self::Error> {
         let id = id.try_into()?;
         tracing::debug!("Fetching epoch {epoch} for group '{id}'");
         let group = self.0.get::<MlsGroupEntity>(&id).await?;
@@ -190,4 +277,3 @@ impl<S: KvExt + Send + Sync> mls_rs_core::group::GroupStateStorage for GroupKv<S
         Ok(self.0.set(&entity).await?)
     }
 }
-

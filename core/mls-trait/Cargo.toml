@@ -16,6 +16,7 @@ test-utils = ["meet-identifiers/test-util", "mls-types/test-utils"]
 external-sender = ["mls-rs?/external_client"]
 
 [dependencies]
+zeroize = { workspace = true, features = ["serde"] }
 meet-mls.workspace = true
 
 mls-spec.workspace = true
