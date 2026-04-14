@@ -207,14 +207,12 @@ features = [
 
 # proton-crypto
 [workspace.dependencies.proton-crypto-account]
-version = "0.12.2"
-git = "git+ssh://git@gitlab.protontech.ch/rust/proton-crypto-rs.git"
-tag = "proton-rpgp-v0.1.0-alpha.1"
+version = "0.13.0"
+registry = "proton_public"
 
 [workspace.dependencies.proton-crypto]
-version = "0.7.0"
-git = "git+ssh://git@gitlab.protontech.ch/rust/proton-crypto-rs.git"
-tag = "proton-rpgp-v0.1.0-alpha.1"
+version = "0.8.0"
+registry = "proton_public"
 
 [workspace.metadata.bin]
 cargo-xcode = { version = "=1.7.0" }
