@@ -6,8 +6,10 @@ frequency = "never" # CM-185: Remove this after February 2026.
 
 [target.wasm32-unknown-unknown]
 rustflags = [
-    '--cfg', 'mls_build_async',
-    '--cfg', 'getrandom_backend="wasm_js"',
+    '--cfg',
+    'mls_build_async',
+    '--cfg',
+    'getrandom_backend="wasm_js"',
     # '-C', 'link-args=-z stack-size=4194304'
 ]
 
@@ -23,10 +25,17 @@ xtask = "run --manifest-path ./xtask/Cargo.toml --"
 xcode = ["bin", "cargo-xcode"]
 check-core = ["check", "-p", "shared", "--no-default-features"]
 unit-test = ["nextest", "run", "-p", "shared", "--no-fail-fast"]
-unit-test-flaky = ["nextest", "run", "-p", "shared", "--no-fail-fast", "--features=flaky"]
+unit-test-flaky = [
+    "nextest",
+    "run",
+    "-p",
+    "shared",
+    "--no-fail-fast",
+    "--features=flaky",
+]
 
-[registries.proton]
-index = "sparse+https://rust.gitlab-pages.protontech.ch/shared/registry/index/"
+[registries.proton_public]
+index = "sparse+https://rust-registry.proton.me/index/"
 
 [env]
 RUST_MIN_STACK = "4194304"
@@ -59,8 +68,10 @@ RANLIB_x86_64_linux_android = "llvm-ranlib"
 ar = "llvm-ar"
 linker = "armv7a-linux-androideabi26-clang"
 rustflags = [
-    "-C", "target_feature=+neon", # Enable NEON SIMD instructions
-    "-C", "link-args=-latomic" # Link against libatomic (atomic operations)
+    "-C",
+    "target_feature=+neon", # Enable NEON SIMD instructions
+    "-C",
+    "link-args=-latomic",   # Link against libatomic (atomic operations)
 ]
 
 # AArch64 (64-bit ARM):
@@ -68,7 +79,8 @@ rustflags = [
 ar = "llvm-ar"
 linker = "aarch64-linux-android26-clang"
 rustflags = [
-    "-C", "link-args=-latomic" # Link against libatomic (atomic operations)
+    "-C",
+    "link-args=-latomic", # Link against libatomic (atomic operations)
 ]
 
 # x86_64 (64-bit Intel):
@@ -76,7 +88,8 @@ rustflags = [
 ar = "llvm-ar"
 linker = "x86_64-linux-android26-clang"
 rustflags = [
-    "-C", "link-args=-latomic" # Link against libatomic (atomic operations)
+    "-C",
+    "link-args=-latomic", # Link against libatomic (atomic operations)
 ]
 
 # osx libsql requires libiconv
