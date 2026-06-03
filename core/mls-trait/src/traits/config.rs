@@ -146,6 +146,10 @@ impl Default for MlsClientConfig {
                     media_type: "video/mp4".into(),
                     parameters: vec![],
                 },
+                MediaType {
+                    media_type: "application/vnd.proton-meet-old-message".into(),
+                    parameters: vec![],
+                },
             ]
             .into(),
             supported_protocol_versions: vec![ProtocolVersion::MLS10],
