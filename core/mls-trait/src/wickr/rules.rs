@@ -544,7 +544,7 @@ impl MlsRules for ProtonMeetRules {
             .map_err(|_| Self::Error::ImplementationError("default rules in mls-rs failed"))?
             .with_ratchet_tree_extension(false)
             .with_single_welcome_message(true)
-            .with_path_required(false)
+            .with_path_required(true)
             .with_allow_external_commit(true))
     }
 
