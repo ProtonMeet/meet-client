@@ -308,7 +308,7 @@ impl MlsGroupConfig {
 #[cfg(any(test, feature = "test-utils"))]
 impl MlsGroupConfig {
     pub fn default(creator: meet_identifiers::UserId, is_host: bool) -> Self {
-        let room_kind = RoomKind::Room {
+        let room_kind = RoomKind::BasicHostedRoom {
             is_open: true,
             other_users: vec![],
         };
