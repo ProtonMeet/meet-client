@@ -153,7 +153,7 @@ version = "3.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "89ec27229c38ed0eb3c0feee3d2c1d6a4379ae44f418a29a658890e062d8f365"
 dependencies = [
- "darling 0.23.0",
+ "darling 0.20.11",
  "ident_case",
  "prettyplease",
  "proc-macro2",
@@ -1548,8 +1548,8 @@ dependencies = [
 
 [[package]]
 name = "mls-rs"
-version = "0.54.0"
-source = "git+https://github.com/nexun-foundation/mls-rs.git#9a180d16b4b88911b8fec618c3109f4019a20673"
+version = "0.55.3"
+source = "git+https://github.com/nexun-foundation/mls-rs.git#df9f89a6fd9195eee2a933e7ab421519e581c2d7"
 dependencies = [
  "async-trait",
  "cfg-if",
@@ -1576,7 +1576,7 @@ dependencies = [
 [[package]]
 name = "mls-rs-codec"
 version = "0.7.0"
-source = "git+https://github.com/nexun-foundation/mls-rs.git#9a180d16b4b88911b8fec618c3109f4019a20673"
+source = "git+https://github.com/nexun-foundation/mls-rs.git#df9f89a6fd9195eee2a933e7ab421519e581c2d7"
 dependencies = [
  "itertools",
  "mls-rs-codec-derive",
@@ -1587,7 +1587,7 @@ dependencies = [
 [[package]]
 name = "mls-rs-codec-derive"
 version = "0.2.0"
-source = "git+https://github.com/nexun-foundation/mls-rs.git#9a180d16b4b88911b8fec618c3109f4019a20673"
+source = "git+https://github.com/nexun-foundation/mls-rs.git#df9f89a6fd9195eee2a933e7ab421519e581c2d7"
 dependencies = [
  "darling 0.23.0",
  "proc-macro2",
@@ -1597,8 +1597,8 @@ dependencies = [
 
 [[package]]
 name = "mls-rs-core"
-version = "0.26.0"
-source = "git+https://github.com/nexun-foundation/mls-rs.git#9a180d16b4b88911b8fec618c3109f4019a20673"
+version = "0.27.0"
+source = "git+https://github.com/nexun-foundation/mls-rs.git#df9f89a6fd9195eee2a933e7ab421519e581c2d7"
 dependencies = [
  "async-trait",
  "hex",
@@ -1613,8 +1613,8 @@ dependencies = [
 
 [[package]]
 name = "mls-rs-crypto-hpke"
-version = "0.20.0"
-source = "git+https://github.com/nexun-foundation/mls-rs.git#9a180d16b4b88911b8fec618c3109f4019a20673"
+version = "0.21.0"
+source = "git+https://github.com/nexun-foundation/mls-rs.git#df9f89a6fd9195eee2a933e7ab421519e581c2d7"
 dependencies = [
  "async-trait",
  "cfg-if",
@@ -1627,8 +1627,8 @@ dependencies = [
 
 [[package]]
 name = "mls-rs-crypto-rustcrypto"
-version = "0.21.0"
-source = "git+https://github.com/nexun-foundation/mls-rs.git#9a180d16b4b88911b8fec618c3109f4019a20673"
+version = "0.22.0"
+source = "git+https://github.com/nexun-foundation/mls-rs.git#df9f89a6fd9195eee2a933e7ab421519e581c2d7"
 dependencies = [
  "aead",
  "aes-gcm",
@@ -1658,8 +1658,8 @@ dependencies = [
 
 [[package]]
 name = "mls-rs-crypto-traits"
-version = "0.21.0"
-source = "git+https://github.com/nexun-foundation/mls-rs.git#9a180d16b4b88911b8fec618c3109f4019a20673"
+version = "0.22.0"
+source = "git+https://github.com/nexun-foundation/mls-rs.git#df9f89a6fd9195eee2a933e7ab421519e581c2d7"
 dependencies = [
  "async-trait",
  "maybe-async",
@@ -1669,8 +1669,8 @@ dependencies = [
 
 [[package]]
 name = "mls-rs-identity-x509"
-version = "0.20.0"
-source = "git+https://github.com/nexun-foundation/mls-rs.git#9a180d16b4b88911b8fec618c3109f4019a20673"
+version = "0.21.0"
+source = "git+https://github.com/nexun-foundation/mls-rs.git#df9f89a6fd9195eee2a933e7ab421519e581c2d7"
 dependencies = [
  "async-trait",
  "maybe-async",
