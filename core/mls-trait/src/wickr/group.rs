@@ -25,7 +25,7 @@ use mls_rs::{
     extension::built_in::ExternalSendersExt,
     framing::{Content, FramedContent, MlsMessagePayload, PublicMessage},
     group::{
-        CommitEffect, ReinitClient,
+        CommitEffect, GroupWriteContext, ReinitClient,
         framing::Sender as WickrSender,
         proposal::{AppDataUpdateOperation, ProposalOrRef},
     },
@@ -48,7 +48,7 @@ pub struct MlsGroup<Kv: KvExt + Send + Sync + Clone, S: MlsGroupState = Initiali
 
 impl<Kv: KvExt + Send + Sync + Clone> MlsGroup<Kv> {
     pub async fn write_to_storage(&mut self) -> MlsResult<usize> {
-        Ok(Box::pin(self.0.write_to_storage()).await?)
+        Ok(self.0.write_to_storage(GroupWriteContext::default()).await?)
     }
 
     async fn _decrypt_message(
@@ -247,7 +247,7 @@ impl<Kv: KvExt + Send + Sync + Clone> MlsGroup<Kv> {
 
 impl<Kv: KvExt + Send + Sync + Clone> MlsGroup<Kv, Uninitialized> {
     pub async fn store(mut self) -> MlsResult<MlsGroup<Kv, Initialized>> {
-        let _ = self.0.write_to_storage().await?;
+        let _ = self.0.write_to_storage(GroupWriteContext::default()).await?;
         Ok(MlsGroup(self.0, core::marker::PhantomData))
     }
 
@@ -325,7 +325,7 @@ impl<Kv: KvExt + Send + Sync + Clone> MlsGroupTrait for MlsGroup<Kv> {
         let mut reinit = None;
         let mut persist_group = false;
         #[cfg(debug_assertions)]
-        let pre_snapshot = self.0.snapshot().expect("failed to snapshot group");
+        let pre_snapshot = self.0.snapshot();
 
         for m in messages {
             let (msg, mut reinit_output) = self._decrypt_message(m.into()).await?;
@@ -348,7 +348,7 @@ impl<Kv: KvExt + Send + Sync + Clone> MlsGroupTrait for MlsGroup<Kv> {
 
         if persist_group {
             #[cfg(debug_assertions)]
-            if pre_snapshot == self.0.snapshot().expect("failed to snapshot group") {
+            if pre_snapshot == self.0.snapshot() {
                 tracing::debug!("[PERF] Unchanged MLS group, persisting the group is not required")
             }
             self.write_to_storage().await?;
@@ -356,7 +356,7 @@ impl<Kv: KvExt + Send + Sync + Clone> MlsGroupTrait for MlsGroup<Kv> {
             #[cfg(debug_assertions)]
             assert_eq!(
                 pre_snapshot,
-                self.0.snapshot().expect("failed to snapshot group"),
+                self.0.snapshot(),
                 "[BUG] MLS group state changed and not persisted"
             );
         }
@@ -374,7 +374,7 @@ impl<Kv: KvExt + Send + Sync + Clone> MlsGroupTrait for MlsGroup<Kv> {
         Option<ReceiverReInitOutput<MlsGroup<Kv, PendingReInit>>>,
     )> {
         #[cfg(debug_assertions)]
-        let pre_snapshot = self.0.snapshot().expect("failed to snapshot group");
+        let pre_snapshot = self.0.snapshot();
 
         let (decrypted, reinit) = self._decrypt_message(message.into()).await?;
         match decrypted {
@@ -383,7 +383,7 @@ impl<Kv: KvExt + Send + Sync + Clone> MlsGroupTrait for MlsGroup<Kv> {
             | ReceivedMessage::ReInit { .. }
             | ReceivedMessage::Proposal => {
                 #[cfg(debug_assertions)]
-                if pre_snapshot == self.0.snapshot().expect("failed to snapshot group") {
+                if pre_snapshot == self.0.snapshot() {
                     tracing::debug!(
                         "[PERF] Unchanged MLS group for {decrypted:?}, persisting the group is not required"
                     )
@@ -408,7 +408,7 @@ impl<Kv: KvExt + Send + Sync + Clone> MlsGroupTrait for MlsGroup<Kv> {
                 #[cfg(debug_assertions)]
                 assert_eq!(
                     pre_snapshot,
-                    self.0.snapshot().expect("failed to snapshot group"),
+                    self.0.snapshot(),
                     "[BUG] MLS group state changed and not persisted"
                 );
 
@@ -871,9 +871,9 @@ impl<Kv: KvExt + Send + Sync + Clone> MlsGroupPendingReInitTrait for MlsGroup<Kv
         let mut new_leaf_node_extensions = ExtensionList::default();
         new_leaf_node_extensions.set(app_data_dictionary.to_mls_rs_extension()?);
 
-        let (group, commit_output) = reinit_client.commit(kps, new_leaf_node_extensions, None).await?;
+        let (group, welcome_messages) = reinit_client.commit(kps, new_leaf_node_extensions, None).await?;
         let group = MlsGroup(Box::new(group), core::marker::PhantomData::<Initialized>);
-        let bundle: CommitBundle = commit_output.try_into()?;
+        let bundle = CommitBundle::from_reinit_welcome_messages(&group.0, welcome_messages)?;
         Ok((group, bundle))
     }
 

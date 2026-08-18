@@ -212,6 +212,8 @@ impl From<WickrEpochRecord> for EpochRecord {
     }
 }
 
+impl<S: KvExt + Send + Sync> mls_rs::group::CoreGroupStateStorage for GroupKv<S> {}
+
 #[async_trait::async_trait]
 impl<S: KvExt + Send + Sync> mls_rs_core::group::GroupStateStorage for GroupKv<S> {
     type Error = WickrProviderError;
