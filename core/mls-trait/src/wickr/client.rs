@@ -294,10 +294,17 @@ impl<Kv: KvExt + Send + Sync + Clone + Debug> MlsClientTrait for MlsClient<Kv, I
         let group_extensions = group_config.group_context_extensions()?;
 
         let leaf_node_extensions = self.config.leaf_node_extensions()?;
-        let group = self
-            .delegate()?
-            .create_group_with(id.to_bytes(), group_extensions, leaf_node_extensions, &si)
-            .await?;
+        let group = mls_rs::group::GroupBuilder::new(
+            self.delegate()?.config().clone(),
+            self.cs.into(),
+            si,
+            self.signature_sk.clone(),
+        )
+        .with_group_id(id.to_bytes())
+        .with_group_context_extensions(group_extensions)
+        .with_leaf_node_extensions(leaf_node_extensions)
+        .build()
+        .await?;
         Ok(MlsGroup(Box::new(group), Default::default()))
     }
 
