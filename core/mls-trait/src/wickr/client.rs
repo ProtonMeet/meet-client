@@ -41,6 +41,7 @@ use proton_claims::{
     UserAsserted,
     reexports::{CwtAny, cose_key_set::CoseKeySet},
 };
+use std::time::Duration;
 use std::{
     collections::HashSet,
     fmt::Debug,
@@ -214,8 +215,9 @@ impl<Kv: KvExt + Send + Sync + Clone + Debug> MlsClient<Kv, Initialized> {
         &self,
         disclosure: Disclosure,
         ctx: &PresentationContext,
+        artificial_time: Option<Duration>,
     ) -> MlsResult<SigningIdentity> {
-        let sd_kbt = self.new_identity_presentation(disclosure, None, ctx)?;
+        let sd_kbt = self.new_identity_presentation(disclosure, None, ctx, artificial_time)?;
         let credential = Credential::Custom(CustomCredential {
             credential_type: mls_spec::defs::CredentialType::SD_CWT_CREDENTIAL.into(),
             data: sd_kbt,
@@ -288,9 +290,14 @@ impl<Kv: KvExt + Send + Sync + Clone + Debug> MlsClientTrait for MlsClient<Kv, I
         id: &GroupId,
         disclosure: Disclosure,
         group_config: MlsGroupConfig,
+        artificial_time: Option<Duration>,
     ) -> MlsResult<MlsGroup<Self::Kv, Uninitialized>> {
         let room_id = group_config.room_id()?;
-        let si = self.new_signing_identity(disclosure, &PresentationContext::CreateGroup { room_id })?;
+        let si = self.new_signing_identity(
+            disclosure,
+            &PresentationContext::CreateGroup { room_id },
+            artificial_time,
+        )?;
         let group_extensions = group_config.group_context_extensions()?;
 
         let leaf_node_extensions = self.config.leaf_node_extensions()?;
@@ -333,12 +340,13 @@ impl<Kv: KvExt + Send + Sync + Clone + Debug> MlsClientTrait for MlsClient<Kv, I
         &self,
         quantity: u32,
         disclosure: Disclosure,
+        artificial_time: Option<Duration>,
     ) -> MlsResult<(Vec<KeyPackage>, core::time::Duration)> {
         if quantity == 0 {
             return Ok((vec![], core::time::Duration::from_secs(0)));
         }
 
-        let si = self.new_signing_identity(disclosure, &PresentationContext::NewKeyPackage)?;
+        let si = self.new_signing_identity(disclosure, &PresentationContext::NewKeyPackage, artificial_time)?;
 
         let kp_extensions = self.config.key_package_extensions()?;
         let leaf_node_extensions = self.config.leaf_node_extensions()?;
@@ -388,6 +396,7 @@ impl<Kv: KvExt + Send + Sync + Clone + Debug> MlsClientTrait for MlsClient<Kv, I
         ratchet_tree: PublicRatchetTree,
         disclosure: Disclosure,
         external_psks: Vec<ExternalPskId>,
+        artificial_time: Option<Duration>,
     ) -> MlsResult<(MlsGroup<Self::Kv, Uninitialized>, CommitBundle)> {
         // Extract typed group info
         let gi = group_info.as_group_info().ok_or_else(|| MlsError::GroupInfoExpected)?;
@@ -396,7 +405,11 @@ impl<Kv: KvExt + Send + Sync + Clone + Debug> MlsClientTrait for MlsClient<Kv, I
             .ok_or(MlsError::ImplementationError("Only MIMI groups are supported"))?;
         let room_id = room_metadata.room_uri.uri.parse()?;
 
-        let si = self.new_signing_identity(disclosure, &PresentationContext::JoinGroupExternalCommit { room_id })?;
+        let si = self.new_signing_identity(
+            disclosure,
+            &PresentationContext::JoinGroupExternalCommit { room_id },
+            artificial_time,
+        )?;
 
         let exported_tree: ExportedTree = ratchet_tree.into();
         let active_participants = exported_tree
@@ -458,6 +471,7 @@ impl<Kv: KvExt + Send + Sync + Clone + Debug> MlsClientTrait for MlsClient<Kv, I
         group_info: MlsMessage,
         ratchet_tree: PublicRatchetTree,
         disclosure: Disclosure,
+        artificial_time: Option<Duration>,
     ) -> MlsResult<MlsMessage> {
         let gi = group_info.as_group_info().ok_or_else(|| MlsError::GroupInfoExpected)?;
 
@@ -466,7 +480,11 @@ impl<Kv: KvExt + Send + Sync + Clone + Debug> MlsClientTrait for MlsClient<Kv, I
             .ok_or(MlsError::ImplementationError("Only MIMI groups are supported"))?;
         let room_id = room_metadata.room_uri.uri.parse()?;
 
-        let si = self.new_signing_identity(disclosure, &PresentationContext::JoinGroupExternalProposal { room_id })?;
+        let si = self.new_signing_identity(
+            disclosure,
+            &PresentationContext::JoinGroupExternalProposal { room_id },
+            artificial_time,
+        )?;
 
         let rt = Some(ratchet_tree.into());
 
@@ -610,11 +628,20 @@ impl<Kv: KvExt + Send + Sync + Clone + Debug> MlsClientTrait for MlsClient<Kv, I
         disclosure: Disclosure,
         user_asserted: Option<UserAsserted>,
         ctx: &PresentationContext,
+        artificial_time: Option<Duration>,
     ) -> MlsResult<Vec<u8>> {
         let signer = self.signature_sk.as_bytes();
         let alg = self.signature_algorithm()?;
         let sd_cwt = self.sd_cwt()?;
-        let sd_kbt = new_identity_presentation(signer, alg, sd_cwt.clone(), disclosure, user_asserted, ctx)?;
+        let sd_kbt = new_identity_presentation(
+            signer,
+            alg,
+            sd_cwt.clone(),
+            disclosure,
+            user_asserted,
+            ctx,
+            artificial_time,
+        )?;
         Ok(sd_kbt)
     }
 
