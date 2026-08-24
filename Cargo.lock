@@ -153,7 +153,7 @@ version = "3.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "89ec27229c38ed0eb3c0feee3d2c1d6a4379ae44f418a29a658890e062d8f365"
 dependencies = [
- "darling 0.20.11",
+ "darling 0.23.0",
  "ident_case",
  "prettyplease",
  "proc-macro2",
@@ -356,7 +356,7 @@ dependencies = [
 [[package]]
 name = "cose-key"
 version = "0.8.0"
-source = "git+https://github.com/beltram/esdicawt.git?tag=v0.8.0#cebb9c0c5204aa4e7b9fe0f8776dd4c074d00973"
+source = "git+https://github.com/ProtonMeet/esdicawt.git?rev=3437489578d53ae842f9ad4a6706cf2c0befd546#3437489578d53ae842f9ad4a6706cf2c0befd546"
 dependencies = [
  "ciborium",
  "coset",
@@ -370,7 +370,7 @@ dependencies = [
 [[package]]
 name = "cose-key-confirmation"
 version = "0.8.0"
-source = "git+https://github.com/beltram/esdicawt.git?tag=v0.8.0#cebb9c0c5204aa4e7b9fe0f8776dd4c074d00973"
+source = "git+https://github.com/ProtonMeet/esdicawt.git?rev=3437489578d53ae842f9ad4a6706cf2c0befd546#3437489578d53ae842f9ad4a6706cf2c0befd546"
 dependencies = [
  "ciborium",
  "cose-key",
@@ -386,7 +386,7 @@ dependencies = [
 [[package]]
 name = "cose-key-set"
 version = "0.8.0"
-source = "git+https://github.com/beltram/esdicawt.git?tag=v0.8.0#cebb9c0c5204aa4e7b9fe0f8776dd4c074d00973"
+source = "git+https://github.com/ProtonMeet/esdicawt.git?rev=3437489578d53ae842f9ad4a6706cf2c0befd546#3437489578d53ae842f9ad4a6706cf2c0befd546"
 dependencies = [
  "cose-key",
  "coset",
@@ -806,7 +806,7 @@ dependencies = [
 [[package]]
 name = "esdicawt"
 version = "0.8.0"
-source = "git+https://github.com/beltram/esdicawt.git?tag=v0.8.0#cebb9c0c5204aa4e7b9fe0f8776dd4c074d00973"
+source = "git+https://github.com/ProtonMeet/esdicawt.git?rev=3437489578d53ae842f9ad4a6706cf2c0befd546#3437489578d53ae842f9ad4a6706cf2c0befd546"
 dependencies = [
  "ciborium",
  "cose-key",
@@ -833,7 +833,7 @@ dependencies = [
 [[package]]
 name = "esdicawt-spec"
 version = "0.8.0"
-source = "git+https://github.com/beltram/esdicawt.git?tag=v0.8.0#cebb9c0c5204aa4e7b9fe0f8776dd4c074d00973"
+source = "git+https://github.com/ProtonMeet/esdicawt.git?rev=3437489578d53ae842f9ad4a6706cf2c0befd546#3437489578d53ae842f9ad4a6706cf2c0befd546"
 dependencies = [
  "ciborium",
  "cose-key-confirmation",
@@ -1380,7 +1380,7 @@ dependencies = [
 [[package]]
 name = "meet-identifiers"
 version = "0.1.0"
-source = "git+https://github.com/ProtonMeet/meet-common.git?branch=main#508ae2be6a74a3d1b7cbdb5439a70dfe58246e76"
+source = "git+https://github.com/ProtonMeet/meet-common.git?branch=main#37f4b951b718e687b9eef0e6c2c0c79a59b91714"
 dependencies = [
  "base64",
  "email_address",
@@ -1402,7 +1402,7 @@ dependencies = [
 [[package]]
 name = "meet-mls"
 version = "0.1.0"
-source = "git+https://github.com/ProtonMeet/meet-common.git?branch=main#508ae2be6a74a3d1b7cbdb5439a70dfe58246e76"
+source = "git+https://github.com/ProtonMeet/meet-common.git?branch=main#37f4b951b718e687b9eef0e6c2c0c79a59b91714"
 dependencies = [
  "meet-identifiers",
  "meet-policy",
@@ -1418,7 +1418,7 @@ dependencies = [
 [[package]]
 name = "meet-policy"
 version = "0.1.0"
-source = "git+https://github.com/ProtonMeet/meet-common.git?branch=main#508ae2be6a74a3d1b7cbdb5439a70dfe58246e76"
+source = "git+https://github.com/ProtonMeet/meet-common.git?branch=main#37f4b951b718e687b9eef0e6c2c0c79a59b91714"
 dependencies = [
  "fwd-comp",
  "meet-identifiers",
@@ -1681,8 +1681,8 @@ dependencies = [
 
 [[package]]
 name = "mls-spec"
-version = "2.0.0"
-source = "git+https://github.com/OtaK/mls-spec.git?branch=feat%2Fdraft-galore#f1ad024c639dc5f7c04a7673d668fdc117ada66b"
+version = "2.0.1"
+source = "git+https://github.com/OtaK/mls-spec.git?branch=feat%2Fdraft-galore#a91b04a20bf587688ca644bdc9e329992a7cbccd"
 dependencies = [
  "async-trait",
  "hex",
@@ -1763,7 +1763,7 @@ dependencies = [
 [[package]]
 name = "mls-utils"
 version = "0.1.0"
-source = "git+https://github.com/ProtonMeet/meet-common.git?branch=main#508ae2be6a74a3d1b7cbdb5439a70dfe58246e76"
+source = "git+https://github.com/ProtonMeet/meet-common.git?branch=main#37f4b951b718e687b9eef0e6c2c0c79a59b91714"
 dependencies = [
  "base64",
  "bs58",
@@ -2024,7 +2024,7 @@ dependencies = [
 [[package]]
 name = "proton-claims"
 version = "0.1.0"
-source = "git+https://github.com/ProtonMeet/meet-common.git?branch=main#508ae2be6a74a3d1b7cbdb5439a70dfe58246e76"
+source = "git+https://github.com/ProtonMeet/meet-common.git?branch=main#37f4b951b718e687b9eef0e6c2c0c79a59b91714"
 dependencies = [
  "derive_builder",
  "digest",
@@ -2369,7 +2369,7 @@ dependencies = [
 [[package]]
 name = "spice-oidc-cwt"
 version = "0.8.0"
-source = "git+https://github.com/beltram/esdicawt.git?tag=v0.8.0#cebb9c0c5204aa4e7b9fe0f8776dd4c074d00973"
+source = "git+https://github.com/ProtonMeet/esdicawt.git?rev=3437489578d53ae842f9ad4a6706cf2c0befd546#3437489578d53ae842f9ad4a6706cf2c0befd546"
 dependencies = [
  "ciborium",
  "digest",

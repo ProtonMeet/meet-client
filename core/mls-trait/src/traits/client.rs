@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use crate::types::ReceivedNewMemberMessage;
 use identity::{Disclosure, PresentationContext};
 use meet_identifiers::{GroupId, UserId};
@@ -31,12 +33,14 @@ pub trait MlsClientTrait {
         id: &GroupId,
         disclosure: Disclosure,
         group_config: MlsGroupConfig,
+        artificial_time: Option<Duration>,
     ) -> MlsResult<MlsGroup<Self::Kv, Uninitialized>>;
 
     async fn new_key_packages(
         &self,
         quantity: u32,
         disclosure: Disclosure,
+        artificial_time: Option<Duration>,
     ) -> MlsResult<(Vec<KeyPackage>, core::time::Duration)>;
 
     async fn count_key_packages(&self) -> MlsResult<u32> {
@@ -107,6 +111,7 @@ pub trait MlsClientTrait {
         ratchet_tree: PublicRatchetTree,
         disclosure: Disclosure,
         external_psks: Vec<ExternalPskId>,
+        artificial_time: Option<Duration>,
     ) -> MlsResult<(MlsGroup<<Self as MlsClientTrait>::Kv, Uninitialized>, CommitBundle)>;
 
     async fn join_via_external_proposal(
@@ -114,6 +119,7 @@ pub trait MlsClientTrait {
         group_info: MlsMessage,
         ratchet_tree: PublicRatchetTree,
         disclosure: Disclosure,
+        artificial_time: Option<Duration>,
     ) -> MlsResult<MlsMessage>;
 
     #[cfg(feature = "external-sender")]
@@ -138,6 +144,7 @@ pub trait MlsClientTrait {
         disclosure: Disclosure,
         user_asserted: Option<UserAsserted>,
         ctx: &PresentationContext,
+        artificial_time: Option<Duration>,
     ) -> MlsResult<Vec<u8>>;
 
     fn new_sd_kbt(
@@ -145,8 +152,10 @@ pub trait MlsClientTrait {
         disclosure: Disclosure,
         user_asserted: Option<UserAsserted>,
         ctx: &PresentationContext,
+        artificial_time: Option<Duration>,
     ) -> MlsResult<identity::SdKbt> {
-        identity::SdKbt::from_cbor_bytes(&self.new_raw_sd_kbt(disclosure, user_asserted, ctx)?).map_err(MlsError::from)
+        identity::SdKbt::from_cbor_bytes(&self.new_raw_sd_kbt(disclosure, user_asserted, ctx, artificial_time)?)
+            .map_err(MlsError::from)
     }
 
     fn new_raw_sd_kbt(
@@ -154,8 +163,9 @@ pub trait MlsClientTrait {
         disclosure: Disclosure,
         user_asserted: Option<UserAsserted>,
         ctx: &PresentationContext,
+        artificial_time: Option<Duration>,
     ) -> MlsResult<Vec<u8>> {
-        self.new_identity_presentation(disclosure, user_asserted, ctx)
+        self.new_identity_presentation(disclosure, user_asserted, ctx, artificial_time)
     }
 
     /// Fill a buffer with random bytes

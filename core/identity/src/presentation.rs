@@ -59,6 +59,7 @@ pub fn new_identity_presentation(
     disclosure: Disclosure,
     mut user_asserted: Option<UserAsserted>,
     ctx: &PresentationContext,
+    artificial_time: Option<Duration>,
 ) -> IdentityResult<Vec<u8>> {
     /// A credential wrapping another must be shorter lived than the one it wraps
     #[cfg(not(any(test, feature = "test-utils")))]
@@ -102,7 +103,7 @@ pub fn new_identity_presentation(
         cnonce: None,
         expiry: Some(expiry),
         with_not_before: false,
-        artificial_time: None,
+        artificial_time,
         time_verification: TimeVerification {
             verify_exp: true,
             verify_iat: false, // don't care and not set for privacy reasons
