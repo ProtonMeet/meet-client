@@ -103,7 +103,8 @@ impl ProtonMeetIdentity for SdCwt {
         Ok(self
             .query(vec![(CwtProtonLabel::Role as i64).into()].into())?
             .map(|v| v.deserialized::<ProtonRole>())
-            .transpose()?.unwrap_or_default())
+            .transpose()?
+            .unwrap_or_default())
     }
 
     fn holder_signature_public_key(&self) -> IdentityResult<Vec<u8>> {

@@ -49,10 +49,7 @@ pub struct MlsPskEntity {
 
 impl MlsPskEntity {
     pub fn new(id: WickrPskId, value: WickrPsk) -> Self {
-        Self {
-            id: id.into(),
-            value,
-        }
+        Self { id: id.into(), value }
     }
 }
 
@@ -69,11 +66,7 @@ impl crate::Entity for MlsPskEntity {
 impl MlsEntity for MlsPskEntity {}
 
 impl<S: KvExt + Send + Sync> PskKv<S> {
-    pub async fn insert_external_psk(
-        &self,
-        id: WickrPskId,
-        value: WickrPsk,
-    ) -> Result<(), WickrProviderError> {
+    pub async fn insert_external_psk(&self, id: WickrPskId, value: WickrPsk) -> Result<(), WickrProviderError> {
         let value = MlsPskEntity::new(id, value);
         Ok(self.0.set::<MlsPskEntity>(&value).await?)
     }

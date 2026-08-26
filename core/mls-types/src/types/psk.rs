@@ -8,15 +8,7 @@ pub struct Psk(pub(crate) mls_rs::psk::PreSharedKey);
 #[serde(transparent)]
 pub struct ExternalPskId(#[serde(with = "serde_bytes")] pub Vec<u8>);
 
-#[derive(
-    Clone,
-    Debug,
-    PartialEq,
-    Eq,
-    serde::Serialize,
-    serde::Deserialize,
-    zeroize::ZeroizeOnDrop,
-)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, zeroize::ZeroizeOnDrop)]
 #[repr(transparent)]
 #[serde(transparent)]
 pub struct ExternalPsk(#[serde(with = "serde_bytes")] pub Vec<u8>);

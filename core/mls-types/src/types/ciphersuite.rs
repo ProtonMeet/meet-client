@@ -171,4 +171,3 @@ impl CipherSuite {
         self.hash_alg().kdf_extract_size()
     }
 }
-

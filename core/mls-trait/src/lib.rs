@@ -6,6 +6,8 @@ pub mod types;
 pub mod wickr;
 
 pub use {
+    error::{MlsError, MlsResult, SuccessorError},
+    kv::{Entity, InsertOutput, KvError, KvExt, MlsEntity, SignaturePK},
     meet_mls::reexports::{
         meet_policy,
         mimi_protocol_mls::{
@@ -14,8 +16,6 @@ pub use {
         },
         mimi_room_policy,
     },
-    error::{MlsError, MlsResult, SuccessorError},
-    kv::{Entity, InsertOutput, KvError, KvExt, MlsEntity, SignaturePK},
     traits::{
         client::{MlsClient, MlsClientTrait},
         config::{CommonMlsGroupConfig, MlsClientConfig, MlsGroupConfig},
