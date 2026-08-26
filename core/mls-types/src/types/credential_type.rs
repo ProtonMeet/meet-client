@@ -7,7 +7,7 @@ use crate::mls_spec;
 pub enum CredentialType {
     Basic = mls_spec::defs::CredentialType::BASIC,
     X509 = mls_spec::defs::CredentialType::X509,
-    SdCwtDraft04 = CredentialType::SD_CWT,
+    SdCwtDraft04 = Self::SD_CWT,
     #[cfg(any(test, feature = "test-utils"))]
     Custom = 1234,
 }

@@ -166,6 +166,7 @@ impl<Kv: KvExt + Send + Sync + Clone> MlsGroup<Kv> {
         })
     }
 
+    #[expect(unused)]
     pub(crate) fn get_component<C: Component + tls_codec::Deserialize>(&self) -> MlsResult<Option<C>> {
         if let Some(application_data) = self.application_data()? {
             Ok(get_component::<C>(&application_data)?)
@@ -180,6 +181,7 @@ impl<Kv: KvExt + Send + Sync + Clone> MlsGroup<Kv> {
 
     // In charge of generating a unique identifier to put in the AAD for correlating commits.
     // It's only used for logging purpose so it's fine if inaccurate and returns an empty array
+    #[expect(unused)]
     fn commit_id(&self, proposals: &[ProposalArg]) -> [u8; 32] {
         use sha2::digest::Digest as _;
 
@@ -199,6 +201,7 @@ impl<Kv: KvExt + Send + Sync + Clone> MlsGroup<Kv> {
 
     // In charge of generating a unique identifier to put in the AAD for correlating proposals.
     // It's only used for logging purpose so it's fine if inaccurate and returns an empty array
+    #[expect(unused)]
     fn proposal_id(&self, proposal: &ProposalArg) -> [u8; 32] {
         use sha2::digest::Digest as _;
 

@@ -57,7 +57,7 @@ pub fn new_identity_presentation(
     alg: SignatureAlgorithm,
     mut sd_cwt: VerifiedSdCwt,
     disclosure: Disclosure,
-    mut user_asserted: Option<UserAsserted>,
+    user_asserted: Option<UserAsserted>,
     ctx: &PresentationContext,
     artificial_time: Option<Duration>,
 ) -> IdentityResult<Vec<u8>> {
