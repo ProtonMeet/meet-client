@@ -1,7 +1,7 @@
 use crate::{MlsTypesError, mls_spec, mls_spec::defs::CiphersuiteId};
 
 /// MLS Ciphersuite
-/// See https://www.rfc-editor.org/rfc/rfc9420.html#name-mls-cipher-suites
+/// See <https://www.rfc-editor.org/rfc/rfc9420.html#name-mls-cipher-suites>
 #[allow(non_camel_case_types)]
 #[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Serialize, serde::Deserialize)]

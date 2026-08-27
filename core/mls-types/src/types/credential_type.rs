@@ -1,7 +1,7 @@
 use crate::mls_spec;
 
 /// MLS Credential type
-/// See https://www.rfc-editor.org/rfc/rfc9420.html#name-mls-credential-types
+/// See <https://www.rfc-editor.org/rfc/rfc9420.html#name-mls-credential-types>
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Serialize, serde::Deserialize)]
 #[repr(u16)]
 pub enum CredentialType {

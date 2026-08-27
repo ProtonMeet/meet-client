@@ -35,7 +35,7 @@ impl From<WickrPskId> for PskEntityId {
 }
 
 /// A PreSharedKey data model
-/// /!\ DO NOT CHANGE THE SERIALIZATION NAMES OF THE FIELDS UNLESS YOU ALSO HAVE A DATABASE MIGRATION IN PLACE
+/// <div class="warning">DO NOT CHANGE THE SERIALIZATION NAMES OF THE FIELDS UNLESS YOU ALSO HAVE A DATABASE MIGRATION IN PLACE</div>
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct MlsPskEntity {
     /// Unique identifier
