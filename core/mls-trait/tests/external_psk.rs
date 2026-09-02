@@ -38,8 +38,7 @@ impl KvExt for InMemoryKv {
             return Ok(InsertOutput::AlreadyExists);
         }
 
-        let raw =
-            serde_json::to_value(value).map_err(|e| KvError::SerializationError(e.to_string()))?;
+        let raw = serde_json::to_value(value).map_err(|e| KvError::SerializationError(e.to_string()))?;
         table.insert(key, raw);
         Ok(InsertOutput::Inserted)
     }
@@ -48,8 +47,7 @@ impl KvExt for InMemoryKv {
         let mut tables = self.lock_tables()?;
         let table = tables.entry(V::table_name()).or_default();
         let key = value.id().to_string();
-        let raw =
-            serde_json::to_value(value).map_err(|e| KvError::SerializationError(e.to_string()))?;
+        let raw = serde_json::to_value(value).map_err(|e| KvError::SerializationError(e.to_string()))?;
         table.insert(key, raw);
         Ok(())
     }

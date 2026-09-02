@@ -331,7 +331,7 @@ impl<Kv: KvExt + Send + Sync + Clone + Debug> MlsClientTrait for MlsClient<Kv, I
         // We have all the groups given as parameters but we are still asking mls-rs to re-fetch them from the DB.
         //
         // Instead we should try to do `Snapshot::mls_decode(&mut &*group)` and `Group::from_snapshot()`
-        let snapshot = mls_rs::group::snapshot::Snapshot::mls_decode(&mut &*group.state.data.as_ref())?;
+        let snapshot = mls_rs::group::snapshot::Snapshot::mls_decode(&mut group.state.data.as_ref())?;
         let group = mls_rs::Group::from_snapshot(self.delegate()?.config().clone(), snapshot).await?;
         Ok(MlsGroup(Box::new(group), Default::default()))
     }

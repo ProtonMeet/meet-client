@@ -355,12 +355,7 @@ impl ClaimExtractor for ProtonMeetClaimExtractor {
         let query: Query = Query::from_cbor_bytes(query).ok()?;
         let mut sd_kbt = self.0.clone();
 
-        match &*query {
-            _ => {
-                // look for the claim in the SD-CWT (well technically in its payload or disclosures)
-                sd_kbt.query(query).ok()?.and_then(|v| v.to_cbor_bytes().ok())
-            }
-        }
+        sd_kbt.query(query).ok()?.and_then(|v| v.to_cbor_bytes().ok())
     }
 }
 

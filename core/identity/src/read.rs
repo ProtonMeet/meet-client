@@ -104,7 +104,6 @@ impl ProtonMeetIdentity for SdCwt {
             .query(vec![(CwtProtonLabel::Role as i64).into()].into())?
             .map(|v| v.deserialized::<ProtonRole>())
             .transpose()?
-            .map(Into::into)
             .unwrap_or_default())
     }
 
@@ -189,9 +188,7 @@ impl ProtonMeetIdentity for SdKbt {
         Ok(self
             .query(vec![(CwtProtonLabel::Role as i64).into()].into())?
             .map(|v| Value::deserialized::<ProtonRole>(&v))
-            .transpose()?
-            .map(Into::into)
-            // if the role is not present, we default to the "user" role
+            .transpose()?// if the role is not present, we default to the "user" role
             .unwrap_or_default())
     }
 

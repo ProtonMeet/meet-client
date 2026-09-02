@@ -1,13 +1,13 @@
 use crate::mls_spec;
 
 /// MLS Credential type
-/// See https://www.rfc-editor.org/rfc/rfc9420.html#name-mls-credential-types
+/// See <https://www.rfc-editor.org/rfc/rfc9420.html#name-mls-credential-types>
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Serialize, serde::Deserialize)]
 #[repr(u16)]
 pub enum CredentialType {
     Basic = mls_spec::defs::CredentialType::BASIC,
     X509 = mls_spec::defs::CredentialType::X509,
-    SdCwtDraft04 = CredentialType::SD_CWT,
+    SdCwtDraft04 = Self::SD_CWT,
     #[cfg(any(test, feature = "test-utils"))]
     Custom = 1234,
 }

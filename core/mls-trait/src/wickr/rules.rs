@@ -75,8 +75,8 @@ impl ProtonMeetRules {
     #[allow(clippy::too_many_arguments, clippy::cognitive_complexity, clippy::unused_self)]
     fn authorize_proposal<C: ClaimExtractor>(
         &self,
-        app_data: &ApplicationDataDictionary,
-        mut sender_sd_kbt: AnySdKbt,
+        #[expect(unused)] app_data: &ApplicationDataDictionary,
+        #[expect(unused)] sender_sd_kbt: AnySdKbt,
         validation_context: &PolicyValidationContext,
         sender_identity: &UserIdentifier,
         sender_role: &Role,

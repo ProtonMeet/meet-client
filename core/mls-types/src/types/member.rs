@@ -89,6 +89,7 @@ impl Member {
         self.credential
     }
 
+    #[expect(unused)]
     fn application_data(&self) -> Option<&ApplicationDataDictionary> {
         self.extensions.0.iter().find_map(|e| match e {
             crate::mls_spec::group::extensions::Extension::ApplicationData(app_data) => Some(app_data),

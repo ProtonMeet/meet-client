@@ -9,13 +9,14 @@ use zeroize::Zeroizing;
 pub struct GroupKv<S: KvExt + Send + Sync>(pub S);
 
 /// A MLS Group data model
-/// /!\ DO NOT CHANGE THE SERIALIZATION NAMES OF THE FIELDS UNLESS YOU ALSO HAVE A DATABASE MIGRATION IN PLACE
+///
+/// <div class="warning">DO NOT CHANGE THE SERIALIZATION NAMES OF THE FIELDS UNLESS YOU ALSO HAVE A DATABASE MIGRATION IN PLACE</div>
 #[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 #[cfg_attr(any(test, feature = "test-utils"), derive(Clone))]
 pub struct MlsGroupEntity {
     /// Unique identifier
     /// serde rename allows for persistence crate to treat this as the primary key since it relies
-    /// on reflection. Has to be the same as [MlsEntity::ID_COLUMN].
+    /// on reflection. Has to be the same as [Entity::ID_COLUMN][crate::kv::Entity::ID_COLUMN].
     #[serde(rename = "id")]
     pub id: GroupId,
     #[serde(rename = "state")]

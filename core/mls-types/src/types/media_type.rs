@@ -2,7 +2,7 @@ use crate::mls_spec::drafts::mls_extensions::{self, content_advertisement, safe_
 use meet_mls::reexports::mimi_protocol_mls::reexports::tls_codec;
 use mls_rs_codec::{MlsDecode, MlsEncode, MlsSize};
 
-/// See https://www.ietf.org/archive/id/draft-ietf-mls-extensions-05.html#section-3.3.2
+/// See <https://www.ietf.org/archive/id/draft-ietf-mls-extensions-05.html#section-3.3.2>
 #[derive(Debug, Clone, PartialEq, Eq, Hash, MlsSize, MlsEncode, MlsDecode, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub struct MediaTypeParameter {
@@ -12,7 +12,7 @@ pub struct MediaTypeParameter {
     pub value: String,
 }
 
-/// See https://www.ietf.org/archive/id/draft-ietf-mls-extensions-05.html#section-3.3.2
+/// See <https://www.ietf.org/archive/id/draft-ietf-mls-extensions-05.html#section-3.3.2>
 #[derive(Debug, Clone, PartialEq, Eq, Hash, MlsSize, MlsEncode, MlsDecode, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub struct MediaType {
@@ -74,7 +74,7 @@ impl TryFrom<content_advertisement::MediaType> for MediaType {
     }
 }
 
-/// See https://www.ietf.org/archive/id/draft-ietf-mls-extensions-05.html#section-3.3.2
+/// See <https://www.ietf.org/archive/id/draft-ietf-mls-extensions-05.html#section-3.3.2>
 #[derive(Default, Debug, Clone, MlsSize, MlsEncode, MlsDecode, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 #[serde(transparent)]
 #[repr(transparent)]

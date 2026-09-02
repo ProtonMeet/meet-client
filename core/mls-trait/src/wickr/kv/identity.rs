@@ -11,7 +11,7 @@ use time::OffsetDateTime;
 pub struct IdentityKv<S: KvExt + Send + Sync>(pub S);
 
 /// A cryptographic identity data model
-/// /!\ DO NOT CHANGE THE SERIALIZATION NAMES OF THE FIELDS UNLESS YOU ALSO HAVE A DATABASE MIGRATION IN PLACE
+/// <div class="warning">DO NOT CHANGE THE SERIALIZATION NAMES OF THE FIELDS UNLESS YOU ALSO HAVE A DATABASE MIGRATION IN PLACE</div>
 #[derive(serde::Serialize, serde::Deserialize)]
 #[must_use]
 pub struct MlsIdentityEntity {
