@@ -2,14 +2,31 @@ default:
   tags:
     - shared-medium
 
-include:
-  - component: gitlab.protontech.ch/proton/devops/cicd-components/kits/devsecops/generic@0.0.43
-    inputs:
-      stage: sec_scan
-  - component: gitlab.protontech.ch/proton/devops/cicd-components/devsecops/semgrep/scan-code@0.0.26
-    inputs:
-      stage: sec_scan
-      allowed-to-fail: true
-
 stages: 
-  - sec_scan
+  - build
+  - test
+
+rust:check:
+  stage: build
+  image: harbor.protontech.ch/docker.io/library/rust:alpine
+  before_script:
+    - apk add --no-cache git
+    - rustup component add clippy rustfmt
+  script:
+    - cargo fmt --check
+    - cargo clippy --all-features
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  interruptible: true
+
+test:
+  stage: test
+  needs: []
+  image: harbor.protontech.ch/docker.io/library/rust:alpine
+  before_script:
+    - apk add --no-cache git
+  script:
+    - cargo test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  interruptible: true
