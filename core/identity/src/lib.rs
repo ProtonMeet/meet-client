@@ -3,7 +3,9 @@ pub use eddsa::{ProtonEd25519SdCwtHolder, ProtonEd25519SdCwtVerifier};
 pub use error::{IdentityError, IdentityResult};
 #[cfg(feature = "test-utils")]
 pub use mock_issuer::*;
-pub use presentation::{Disclosure, PresentationContext, new_identity_presentation, verify_sd_cwt};
+pub use presentation::{
+    DS_BEARER_AUDIENCE, DS_BEARER_LIFETIME, Disclosure, PresentationContext, new_identity_presentation, verify_sd_cwt,
+};
 pub use read::{ProtonMeetIdentity, ProtonMeetUserAssertedIdentity};
 
 use proton_claims::{

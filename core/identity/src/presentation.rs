@@ -12,6 +12,12 @@ use proton_claims::{
     },
 };
 
+/// SD-KBT audience of a [`PresentationContext::DsBearer`] presentation.
+pub const DS_BEARER_AUDIENCE: &str = "meet-ds-bearer";
+
+/// Lifetime of a [`PresentationContext::DsBearer`] presentation. Mint a fresh one per request.
+pub const DS_BEARER_LIFETIME: Duration = Duration::from_secs(60);
+
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum Disclosure {
     /// Disclose all the redacted claims of the SD-CWT
@@ -61,22 +67,7 @@ pub fn new_identity_presentation(
     ctx: &PresentationContext,
     artificial_time: Option<Duration>,
 ) -> IdentityResult<Vec<u8>> {
-    /// A credential wrapping another must be shorter lived than the one it wraps
-    #[cfg(not(any(test, feature = "test-utils")))]
-    const PRESENTATION_LEEWAY: Duration = Duration::from_secs(5);
-    #[cfg(any(test, feature = "test-utils"))]
-    const PRESENTATION_LEEWAY: Duration = Duration::from_millis(1);
-
-    // in case no expiry is defined
-    const DEFAULT_EXPIRY: Duration = Duration::from_secs(3600 * 24 * 90); // 90 days
-
-    let expiry = sd_cwt
-        .0
-        .exp()?
-        .map(|e| Duration::from_secs(e as u64))
-        .map(|e| e.saturating_sub(PRESENTATION_LEEWAY))
-        .map(TimeArg::Absolute)
-        .unwrap_or(TimeArg::Relative(DEFAULT_EXPIRY));
+    let expiry = presentation_expiry(ctx, sd_cwt.0.exp()?);
 
     let presentation = match disclosure {
         Disclosure::Full => Presentation::Full,
@@ -87,15 +78,7 @@ pub fn new_identity_presentation(
         })),
     };
 
-    let audience = match ctx {
-        PresentationContext::CreateGroup { room_id }
-        | PresentationContext::JoinGroupExternalCommit { room_id, .. }
-        | PresentationContext::GroupReInit { room_id }
-        | PresentationContext::NewKeyPackageForConsentRequest { room_id: Some(room_id) } => {
-            std::borrow::Cow::Owned(room_id.to_string())
-        }
-        _ => std::borrow::Cow::Borrowed(""),
-    };
+    let audience = presentation_audience(ctx);
 
     let presentation_params = HolderParams::<UserAsserted> {
         presentation,
@@ -130,6 +113,40 @@ pub fn new_identity_presentation(
     Ok(sd_kbt)
 }
 
+fn presentation_expiry(ctx: &PresentationContext, sd_cwt_exp: Option<i64>) -> TimeArg {
+    /// A credential wrapping another must be shorter lived than the one it wraps
+    #[cfg(not(any(test, feature = "test-utils")))]
+    const PRESENTATION_LEEWAY: Duration = Duration::from_secs(5);
+    #[cfg(any(test, feature = "test-utils"))]
+    const PRESENTATION_LEEWAY: Duration = Duration::from_millis(1);
+
+    // in case no expiry is defined
+    const DEFAULT_EXPIRY: Duration = Duration::from_secs(3600 * 24 * 90); // 90 days
+
+    match ctx {
+        // The DS verifies the SD-CWT expiry independently, so outliving it grants nothing.
+        PresentationContext::DsBearer => TimeArg::Relative(DS_BEARER_LIFETIME),
+        _ => sd_cwt_exp
+            .map(|e| Duration::from_secs(e as u64))
+            .map(|e| e.saturating_sub(PRESENTATION_LEEWAY))
+            .map(TimeArg::Absolute)
+            .unwrap_or(TimeArg::Relative(DEFAULT_EXPIRY)),
+    }
+}
+
+fn presentation_audience(ctx: &PresentationContext) -> std::borrow::Cow<'_, str> {
+    match ctx {
+        PresentationContext::CreateGroup { room_id }
+        | PresentationContext::JoinGroupExternalCommit { room_id, .. }
+        | PresentationContext::GroupReInit { room_id }
+        | PresentationContext::NewKeyPackageForConsentRequest { room_id: Some(room_id) } => {
+            std::borrow::Cow::Owned(room_id.to_string())
+        }
+        PresentationContext::DsBearer => std::borrow::Cow::Borrowed(DS_BEARER_AUDIENCE),
+        _ => std::borrow::Cow::Borrowed(""),
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum PresentationContext {
     /// Creating a MLS group
@@ -161,4 +178,75 @@ pub enum PresentationContext {
     DsBearer,
     /// Default presentation, currently associated with full disclosure
     Default,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use meet_identifiers::Domain;
+
+    const SD_CWT_EXP: i64 = 1_900_000_000;
+
+    fn non_bearer_contexts() -> Vec<PresentationContext> {
+        let room_id = RoomId::new(&"meet.proton.me".parse::<Domain>().unwrap());
+        vec![
+            PresentationContext::CreateGroup {
+                room_id: room_id.clone(),
+            },
+            PresentationContext::JoinGroupExternalCommit {
+                room_id: room_id.clone(),
+            },
+            PresentationContext::JoinGroupExternalProposal {
+                room_id: room_id.clone(),
+            },
+            PresentationContext::GroupReInit {
+                room_id: room_id.clone(),
+            },
+            PresentationContext::Update {
+                room_id: room_id.clone(),
+            },
+            PresentationContext::NewKeyPackage,
+            PresentationContext::NewKeyPackageForConsentRequest { room_id: Some(room_id) },
+            PresentationContext::NewKeyPackageForConsentRequest { room_id: None },
+            PresentationContext::Default,
+        ]
+    }
+
+    #[test]
+    fn ds_bearer_uses_dedicated_audience() {
+        assert_eq!(
+            presentation_audience(&PresentationContext::DsBearer),
+            DS_BEARER_AUDIENCE
+        );
+    }
+
+    #[test]
+    fn credential_contexts_never_use_ds_bearer_audience() {
+        for ctx in non_bearer_contexts() {
+            assert_ne!(presentation_audience(&ctx), DS_BEARER_AUDIENCE, "{ctx:?}");
+        }
+    }
+
+    #[test]
+    fn ds_bearer_is_short_lived_regardless_of_sd_cwt_expiry() {
+        for sd_cwt_exp in [Some(SD_CWT_EXP), None] {
+            assert_eq!(
+                presentation_expiry(&PresentationContext::DsBearer, sd_cwt_exp),
+                TimeArg::Relative(DS_BEARER_LIFETIME)
+            );
+        }
+    }
+
+    #[test]
+    fn credential_contexts_keep_sd_cwt_bound_expiry() {
+        for ctx in non_bearer_contexts() {
+            assert!(
+                matches!(
+                    presentation_expiry(&ctx, Some(SD_CWT_EXP)),
+                    TimeArg::Absolute(exp) if exp < Duration::from_secs(SD_CWT_EXP as u64)
+                ),
+                "{ctx:?}"
+            );
+        }
+    }
 }
