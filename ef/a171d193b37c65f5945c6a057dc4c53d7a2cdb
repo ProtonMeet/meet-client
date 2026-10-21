@@ -24,6 +24,20 @@ core/identity/src/presentation.rs
       "human_author": "Steven Lin <yu-cheng.lin@proton.ch>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 10,
+    "ai_additions": 106,
+    "ai_accepted": 106,
+    "git_diff_deleted_lines": 26,
+    "git_diff_added_lines": 116,
+    "tool_model_breakdown": {
+      "cursor::claude-opus-5-5": {
+        "ai_additions": 106,
+        "ai_accepted": 106
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -54,6 +68,12 @@ core/identity/src/presentation.rs
         "cache_read_input_tokens": 9677608
       }
     }
+  },
+  "activity": {
+    "added_sloc": 93,
+    "deleted_sloc": 25,
+    "checkpoints": 7,
+    "span_seconds": 58
   },
   "proton_build": "1.7.6-proton.8"
 }
