@@ -1,0 +1,83 @@
+core/identity/src/lib.rs
+  s_af82ba07182ebb::t_d3ed46cd4aa434 6-8
+core/identity/src/presentation.rs
+  s_af82ba07182ebb::t_b4096b1b090d98 117
+  s_af82ba07182ebb::t_b357ff11b8c88f 242-244
+  s_af82ba07182ebb::t_546e3f56a3ad14 182
+  s_af82ba07182ebb::t_38c52ce3d5c0ee 15-20
+  s_af82ba07182ebb::t_d449b6c1f16575 116,183-192,194-241,249-251
+  s_af82ba07182ebb::t_833441657a20fd 193
+  s_af82ba07182ebb::t_19929c424cdb2f 118-149,252
+  s_af82ba07182ebb::t_0949f7f4e2ad84 245-248
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "126c0df9b60b3f96003120cc6f98afacd8e13772",
+  "prompts": {},
+  "sessions": {
+    "s_af82ba07182ebb": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "48b8efa2-9830-4747-8102-2ee25776f86c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Steven Lin <yu-cheng.lin@proton.ch>"
+    }
+  },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 2,
+    "ai_additions": 114,
+    "ai_accepted": 114,
+    "git_diff_deleted_lines": 26,
+    "git_diff_added_lines": 116,
+    "tool_model_breakdown": {
+      "cursor::claude-opus-5-5": {
+        "ai_additions": 114,
+        "ai_accepted": 114
+      }
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 116,
+        "output_tokens": 33655,
+        "cache_creation_input_tokens": 567251,
+        "cache_read_input_tokens": 9677608
+      },
+      "by_tool_model": {
+        "cursor::claude-opus-5-5": {
+          "input_tokens": 116,
+          "output_tokens": 33655,
+          "cache_creation_input_tokens": 567251,
+          "cache_read_input_tokens": 9677608
+        }
+      },
+      "tool_uses": {
+        "read": 4,
+        "shell": 34,
+        "write": 7
+      }
+    },
+    "by_prompt": {
+      "s_af82ba07182ebb": {
+        "input_tokens": 116,
+        "output_tokens": 33655,
+        "cache_creation_input_tokens": 567251,
+        "cache_read_input_tokens": 9677608
+      }
+    },
+    "origins": [
+      "7e668018bd480caea29e17d8dbb93bf01348dbd0"
+    ]
+  },
+  "activity": {
+    "added_sloc": 93,
+    "deleted_sloc": 25,
+    "checkpoints": 7,
+    "span_seconds": 58
+  },
+  "proton_build": "1.7.6-proton.8"
+}
