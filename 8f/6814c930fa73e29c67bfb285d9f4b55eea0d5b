@@ -1,0 +1,22 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "8f6814c930fa73e29c67bfb285d9f4b55eea0d5b",
+  "prompts": {},
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 0,
+    "ai_accepted": 0,
+    "git_diff_deleted_lines": 98,
+    "git_diff_added_lines": 0,
+    "tool_model_breakdown": {}
+  },
+  "token_usage": {
+    "origins": [
+      "b44f737d3244c731e51e7b09a6913b3eb4c966c3"
+    ]
+  },
+  "proton_build": "1.7.6-proton.8"
+}
