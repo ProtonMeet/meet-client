@@ -3,15 +3,15 @@ use mls_trait::{Entity, InsertOutput, KvError, KvExt, MlsEntity, ProposalArg, Pr
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
+type InMemoryKvTable = HashMap<&'static str, HashMap<String, serde_json::Value>>;
+
 #[derive(Clone, Default)]
 struct InMemoryKv {
-    tables: Arc<Mutex<HashMap<&'static str, HashMap<String, serde_json::Value>>>>,
+    tables: Arc<Mutex<InMemoryKvTable>>,
 }
 
 impl InMemoryKv {
-    fn lock_tables(
-        &self,
-    ) -> Result<std::sync::MutexGuard<'_, HashMap<&'static str, HashMap<String, serde_json::Value>>>, KvError> {
+    fn lock_tables(&self) -> Result<std::sync::MutexGuard<'_, InMemoryKvTable>, KvError> {
         self.tables.lock().map_err(|_| KvError::InternalError)
     }
 }

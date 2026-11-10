@@ -216,7 +216,7 @@ impl<Kv: KvExt + Send + Sync + Clone> MlsGroup<Kv> {
         match proposal {
             ProposalArg::Remove(i) => format!("remove-{i}"),
             ProposalArg::Add(kp) => format!("add-{:x?}", kp.mls_encode_to_vec().unwrap_or_default()),
-            ProposalArg::PskExternal { id } => format!("psk-external-{:x?}", &id.0),
+            ProposalArg::PskExternal { id } => format!("psk-external-{:x?}", id.0),
             ProposalArg::Update {
                 credential,
                 extensions,
