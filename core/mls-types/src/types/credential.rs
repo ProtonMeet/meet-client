@@ -4,6 +4,7 @@ use meet_identifiers::{AsOwned, DeviceId, DeviceIdRef, ProtonEmail, UserId};
 use proton_claims::{About, ProtonMeetClaims, Role as ProtonRole};
 use url::Url;
 
+#[allow(clippy::large_enum_variant)]
 #[derive(Clone, PartialEq)]
 pub enum Credential {
     #[cfg(any(test, feature = "test-utils"))]
